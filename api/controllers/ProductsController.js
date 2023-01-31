@@ -1,5 +1,6 @@
 // imports
 const mongoose = require('mongoose')
+const { createError } = require('../../error/error')
 
 // db connection
 const db = mongoose.connection
@@ -33,13 +34,7 @@ exports.getProductById = (req, res, next) => {
             const product = await Product.findById(req.params.id)
 
             // no product found error
-            if (!product) {
-                const msg = "No product found"
-                const error = new Error(msg)
-                error.statusCode = 404
-                error.statusMessage = msg
-                throw error
-            }
+            if (!product) throw createError(404, "No product found")
 
             // send product
             await res.status(200).json(product)
@@ -47,14 +42,9 @@ exports.getProductById = (req, res, next) => {
         } catch(e) {
 
             // send bad request response if Object ID could not be casted
-            if (e instanceof mongoose.Error.CastError) {
-                const msg = "Invalid product id"
-                const error = new Error(msg)
-                error.statusCode = 400
-                error.statusMessage = msg
-                next(error)
-            }
+            if (e instanceof mongoose.Error.CastError) next(createError(400, "Invalid product id", e.message))
 
+            // all other errors
             next(e)
         }
     })()

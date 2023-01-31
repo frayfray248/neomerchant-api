@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === "development") {
 // imports
 const express = require('express')
 const morgan = require('morgan')
-const errorHandler = require('./error/errorHandler')
+const { errorHandler } = require('./error/error')
 
 // vars
 const port = process.env.PORT || 3000
