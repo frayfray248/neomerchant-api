@@ -9,6 +9,7 @@ const router = express.Router()
 
 // routes
 router.get('/', ProductController.getProducts)
+router.get('/:id', ProductController.getProductById)
 
 // export
 module.exports = router
