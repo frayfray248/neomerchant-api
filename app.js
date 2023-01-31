@@ -9,6 +9,9 @@ const express = require('express')
 // app
 const app = express()
 
+// db
+require('./db/db')
+
 // vars
 const port = process.env.PORT || 3000
 
