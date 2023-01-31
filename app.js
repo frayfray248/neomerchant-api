@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === "development") {
 // imports
 const express = require('express')
 const morgan = require('morgan')
+const errorHandler = require('./error/errorHandler')
 
 // vars
 const port = process.env.PORT || 3000
@@ -16,6 +17,7 @@ const app = express()
 // middlewares
 app.use(express.json()); // parse json payloads
 app.use(morgan('dev'));  // logging
+
 
 // connect to database
 require('./db/db')
@@ -28,6 +30,9 @@ app.get('/', (req, res) => {
 
 // routes
 app.use('/products', require('./api/routes/productsRoute'))
+
+// error handler
+app.use(errorHandler)
 
 // start server
 app.listen(port, () => {

@@ -15,13 +15,11 @@ exports.getProducts = (req, res, next) => {
             // get products
             const products = await Product.find()
 
+            // send products
             await res.status(200).json(products)
-
-
+ 
         } catch(e) {
-
-            console.log(e)
-
+            next(e)
         }
     })()
 }
