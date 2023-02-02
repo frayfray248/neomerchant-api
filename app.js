@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === "development") {
 // imports
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const { errorHandler } = require('./error/error')
 
 // vars
@@ -17,6 +18,7 @@ const app = express()
 // middlewares
 app.use(express.json()); // parse json payloads
 app.use(morgan('dev'));  // logging
+app.use(cors())
 
 
 // connect to database
