@@ -16,6 +16,10 @@ exports.createUser = (req, res, next) => {
             // get user
             const user = req.body
 
+            // validate user
+            if (!user.username) throw createError(400, "username required")
+            if (!user.password) throw createError(400, "password required")
+
             // create new user
             const newUser = await User.create(user)
             await newUser.save()
