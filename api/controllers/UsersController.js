@@ -44,6 +44,35 @@ exports.createUser = (req, res, next) => {
     })()
 }
 
+// delete a user
+exports.deleteUser = (req, res, next) => {
+    (async () => {
+        try {
+            // find user
+            const user = await User.findOne({
+                _id: req.userData._id
+            })
+
+            // no user found error
+            if (!user) throw createError(404, "user not found")
+
+            // delete user
+            await User.deleteOne({
+                _id: req.userData._id
+            })
+
+
+            // response
+            res.status(200).json({ message: "user deleted" })
+
+        } catch (e) {
+
+            next(e)
+
+        }
+    })()
+}
+
 // login a user
 exports.login = (req, res, next) => {
     (async () => {
@@ -69,7 +98,7 @@ exports.login = (req, res, next) => {
 
             // create json token payload
             const jwtPayLoad = {
-                username : user.username,
+                username: user.username,
                 _id: user._id
             }
 
@@ -77,7 +106,7 @@ exports.login = (req, res, next) => {
             const token = await jwt.sign(
                 jwtPayLoad,
                 process.env.JWT_KEY,
-                { expiresIn: "1h"}
+                { expiresIn: "1h" }
             )
 
             // send token
