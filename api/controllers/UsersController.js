@@ -13,9 +13,23 @@ exports.createUser = (req, res, next) => {
     (async () => {
         try {
 
-           res.status(200).json({ message : "Create User"})
- 
-        } catch(e) {
+            // get user
+            const user = req.body
+
+            // create new user
+            const newUser = await User.create(user)
+            await newUser.save()
+
+            // response
+            res.status(201).json({ message: "User created" })
+
+        } catch (e) {
+
+            // duplicate username error
+            if (e instanceof mongoose.mongo.MongoServerError && e.code === 11000) {
+                next(createError(400, "username taken"))
+            }
+
             next(e)
         }
     })()
