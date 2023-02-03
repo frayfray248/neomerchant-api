@@ -1,6 +1,6 @@
 {
   "name": "neomerchant-api",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "An Express REST API for the neomerchant ecommerce site",
   "main": "app.js",
   "scripts": {
