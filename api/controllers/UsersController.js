@@ -1,5 +1,6 @@
 // imports
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const { createError } = require('../../error/error')
 
 // db connection
@@ -21,7 +22,10 @@ exports.createUser = (req, res, next) => {
             if (!user.password) throw createError(400, "password required")
 
             // create new user
-            const newUser = await User.create(user)
+            const newUser = await User.create({
+                username: user.username,
+                password: await bcrypt.hash(user.password, 10) 
+            })
             await newUser.save()
 
             // response
