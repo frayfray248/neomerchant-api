@@ -1,24 +1,33 @@
-# Description
+# Neomerchant-api
 
-An Express REST API for the neomerchant ecommerce site
+Neomerchant-api is a REST API to manage products, users, and stores, and handle payments for an ecommerce store. It is built using Node JS Express. It is the backend for the [neomerchant-app](https://github.com/frayfray248/neomerchant-app).
 
-## Endpoints
+# Endpoints
 
-### Products
+## Products
 
 | Method | Path | Description |
 | ----- | ----- | ----- |
 | GET | /products | Get all products |
 | GET | /products/{id} | Get a product by id |
 
-## Data
+# Data Models
 
-### Product
+## Product
 
-| Name | Type |
-| ----- | ----- |
-|id | number |
-| title | string |
-| description | string |
-| price | number |
-| category | string |
+```json
+{
+    name: String,
+    title : String,
+    description : String,
+    price : Number,
+    category : String
+}
+```
+
+# Upcoming Features
+
+- User, orders, and store data models and endpoints
+- JWT session token generation
+- Paypal payment handling
+

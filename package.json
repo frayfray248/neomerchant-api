@@ -1,6 +1,6 @@
 {
   "name": "neomerchant-api",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "An Express REST API for the neomerchant ecommerce site",
   "main": "app.js",
   "scripts": {
@@ -17,9 +17,11 @@
   "author": "Fraser Macallum",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "morgan": "^1.10.0"
   },
