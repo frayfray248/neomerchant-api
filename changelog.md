@@ -1,3 +1,10 @@
+# 0.4.0
+
+- Added POST /users endpoint to create users
+- Added POST /users/login endpoint to log users in and receive a session token
+- Added JWT authorization middleware 
+- Added Delete /users endpoint to delete users
+
 # 0.3.2
 
 - Added CORS middleware
