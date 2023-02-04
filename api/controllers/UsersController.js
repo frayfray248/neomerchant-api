@@ -18,15 +18,20 @@ exports.createUser = (req, res, next) => {
             // get user
             const user = req.body
 
-            // validate user
+            // check if username and password was provided
             if (!user.username) throw createError(400, "username required")
             if (!user.password) throw createError(400, "password required")
+
+            // password length check
+            if (user.password.length < 6) throw createError(400, "password must be at least 6 characters long")
 
             // create new user
             const newUser = await User.create({
                 username: user.username,
                 password: await bcrypt.hash(user.password, 10)
             })
+
+            // save
             await newUser.save()
 
             // response
@@ -37,6 +42,11 @@ exports.createUser = (req, res, next) => {
             // duplicate username error
             if (e instanceof mongoose.mongo.MongoServerError && e.code === 11000) {
                 next(createError(400, "username taken"))
+            }
+
+            // validation error
+            if (e.name === "ValidationError") {
+                next(createError(400, "invalid user data"))
             }
 
             next(e)
