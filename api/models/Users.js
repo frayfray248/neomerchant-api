@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minLength: 6
     },
+    shoppingCart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ShoppingCart"
+    },
     role: String,
     orders: Object
 })

@@ -109,7 +109,7 @@ exports.login = (req, res, next) => {
             // create json token payload
             const jwtPayLoad = {
                 username: user.username,
-                _id: user._id
+                id: user._id
             }
 
             // create json token
