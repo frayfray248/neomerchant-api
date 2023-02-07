@@ -12,7 +12,7 @@ const router = express.Router()
 
 // routes
 router.post('/', auth, ShoppingCartController.createShoppingCart)
-// router.get('/:id', auth, ShoppingCartController.getShoppingCartById)
+router.get('/:id', auth, ShoppingCartController.getShoppingCartById)
 // router.patch('/:id', auth, ShoppingCartController.updateShoppingCart)
 
 

@@ -112,6 +112,10 @@ exports.login = (req, res, next) => {
                 id: user._id
             }
 
+            if (user.shoppingCart) {
+                jwtPayLoad.shoppingCartId = user.shoppingCart
+            }
+
             // create json token
             const token = await jwt.sign(
                 jwtPayLoad,
