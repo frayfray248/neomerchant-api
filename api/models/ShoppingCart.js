@@ -6,8 +6,15 @@ const ShoppingCartSchema = new mongoose.Schema({
         ref: "User"
     },
     products: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        quantity: {
+            type: Number,
+            required: true
+        }
+        
     }]
 })
 
