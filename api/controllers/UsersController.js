@@ -9,6 +9,7 @@ const db = mongoose.connection
 
 // models
 const User = require('../models/Users')
+const ShoppingCart = require("../models/ShoppingCart")
 
 // create a user
 exports.createUser = (req, res, next) => {
@@ -35,7 +36,7 @@ exports.createUser = (req, res, next) => {
             await newUser.save()
 
             // response
-            res.status(201).json({ message: "User created" })
+            res.status(201).json(newUser)
 
         } catch (e) {
 
@@ -58,19 +59,25 @@ exports.createUser = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {
     (async () => {
         try {
+            const userId = req.params.id
+            const tokenUserId = req.userData.id
+
+            // check if token user is param user
+            if (userId !== tokenUserId) throw createError(401, "Not authorized")
+
             // find user
             const user = await User.findOne({
-                _id: req.userData._id
+                _id: userId
             })
 
             // no user found error
             if (!user) throw createError(404, "user not found")
 
-            // delete user
-            await User.deleteOne({
-                _id: req.userData._id
-            })
+            // delete user's shopping cart
+            if (user.shoppingCart) await ShoppingCart.findByIdAndDelete(user.shoppingCart)
 
+            // delete user
+            await user.delete()
 
             // response
             res.status(200).json({ message: "user deleted" })

@@ -12,7 +12,7 @@ const router = express.Router()
 
 // routes
 router.post('/', UsersController.createUser)
-router.delete('/', auth, UsersController.deleteUser)
+router.delete('/:id', auth, UsersController.deleteUser)
 router.post('/login', UsersController.login)
 
 
