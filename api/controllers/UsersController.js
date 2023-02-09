@@ -132,12 +132,46 @@ exports.login = (req, res, next) => {
 
             // send token
             res.status(200).send({
+                userId: user._id,
                 token: token
             })
 
 
         } catch (e) {
 
+
+            next(e)
+        }
+    })()
+}
+
+// get user's shopping cart
+exports.getShoppingCart = (req, res, next) => {
+    (async () => {
+        try {
+
+            // get ids
+            const userId = req.params.userId
+            const tokenUserId = req.userData.id
+
+            // user id check
+            if (userId !== tokenUserId) throw createError(401, "Not authorized")
+            
+            // get user document
+            const user = await User.findById(userId)
+            
+            // get user's shopping cart id
+            const shoppingCartId = user.shoppingCart
+            
+            if (!shoppingCartId) throw createError(400, "No shopping cart found")
+            
+            // get shopping cart
+            const shoppingCart = await ShoppingCart.findById(shoppingCartId)
+            
+            res.status(200).json(shoppingCart)
+            
+
+        } catch(e) {
 
             next(e)
         }

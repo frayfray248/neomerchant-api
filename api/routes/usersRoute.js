@@ -14,6 +14,7 @@ const router = express.Router()
 router.post('/', UsersController.createUser)
 router.delete('/:id', auth, UsersController.deleteUser)
 router.post('/login', UsersController.login)
+router.get('/:userId/shoppingCart', auth, UsersController.getShoppingCart)
 
 
 // export
