@@ -4,9 +4,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { createError } = require('../../error/error')
 
-// db connection
-const db = mongoose.connection
-
 // models
 const User = require('../models/Users')
 const ShoppingCart = require("../models/ShoppingCart")
@@ -132,7 +129,6 @@ exports.login = (req, res, next) => {
 
             // send token
             res.status(200).send({
-                userId: user._id,
                 token: token
             })
 
@@ -163,12 +159,62 @@ exports.getShoppingCart = (req, res, next) => {
             // get user's shopping cart id
             const shoppingCartId = user.shoppingCart
             
-            if (!shoppingCartId) throw createError(400, "No shopping cart found")
+            if (!shoppingCartId) throw createError(404, "No shopping cart found")
             
             // get shopping cart
             const shoppingCart = await ShoppingCart.findById(shoppingCartId)
             
             res.status(200).json(shoppingCart)
+            
+
+        } catch(e) {
+
+            next(e)
+        }
+    })()
+}
+
+// update a user's shopping cart
+exports.updateShoppingCart = (req, res, next) => {
+    (async () => {
+        try {
+
+            // get ids
+            const userId = req.params.userId
+            const tokenUserId = req.userData.id
+            const newShoppingCart = req.body
+            
+            // user id check
+            if (userId !== tokenUserId) throw createError(401, "Not authorized")
+            
+            // get user document
+            const user = await User.findById(userId)
+            
+            // get user's shopping cart id
+            const shoppingCartId = user.shoppingCart
+            
+            if (!shoppingCartId) throw createError(404, "No shopping cart found")
+            
+            // get shopping cart
+            const shoppingCart = await ShoppingCart.findById(shoppingCartId)
+
+
+             // clear old shopping cart products
+             shoppingCart.products = []
+
+             // update shopping cart
+             for (const newProduct of newShoppingCart.products) {
+                 shoppingCart.products.push({
+                     _id: newProduct._id,
+                     quantity: newProduct.quantity
+                 })
+             }
+ 
+             // save
+             await shoppingCart.save()
+             
+             // response
+             res.status(200).json(shoppingCart)
             
 
         } catch(e) {

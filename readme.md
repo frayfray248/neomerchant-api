@@ -4,16 +4,38 @@ Neomerchant-api is a REST API to manage products, users, and stores, and handle 
 
 # Endpoints
 
-## Products
+| Method | Path | Description | Requires Authentication |
+| ----- | ----- | ----- | ----- |
+| GET | /products | Get all products | No |
+| GET | /products/{id} | Get a product by id | No |
+| GET | /users/{id}/shoppingcart/ | Get a user's shopping cart | Yes |
+| GET | /users | Get All users | No |
+| POST | /users/login | Log in a user and return a session token | No |
+| PATCH | /users/{id}/shoppingcart | Update a user's shopping cart | Yes |
+| DELETE | /users/{id} | Delete a user by id | Yes |
+| GET | /shoppingcart/{id} | Get a shopping cart by id | Yes |
+| POST | /shoppingcart | Create a shopping cart | Yes |
+| PATCH | /shoppingcart/{id} | Update a shopping cart | Yes |
 
-| Method | Path | Description |
-| ----- | ----- | ----- |
-| GET | /products | Get all products |
-| GET | /products/{id} | Get a product by id |
+# Authentication
+JSON web tokens are used for login sessions. To generate a token, make a post request to /users/login with the following payload:
+
+```json
+{
+    "username" : String,
+    "password" : String
+}
+```
+
+A JWT token will be sent back if authentication is successful. Use the JWT in the authentication header for any endpoints that require authentication.
+```
+Authentication: Bearer {token}
+```
+
 
 # Data Models
 
-## Product
+### Product
 
 ```json
 {
@@ -24,10 +46,30 @@ Neomerchant-api is a REST API to manage products, users, and stores, and handle 
     category : String
 }
 ```
+### User
+```json
+{
+    username: String,
+    password: String,
+    role: String,
+    shoppingCart: ObjectID,
+    orders: Array
+}
+```
+### ShoppingCart
+```json
+{
+    products: [
+        {
+            _id: ObjectID,
+            quantity: Number
+        }
+    ]
+}
+```
 
 # Upcoming Features
 
-- User, orders, and store data models and endpoints
-- JWT session token generation
 - Paypal payment handling
+- Order creation
 
