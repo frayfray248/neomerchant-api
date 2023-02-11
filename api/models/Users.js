@@ -4,11 +4,18 @@ const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        minLength: 3,
+        maxLength: 18,
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minLength: 6
+    },
+    shoppingCart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ShoppingCart"
     },
     role: String,
     orders: Object

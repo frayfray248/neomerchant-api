@@ -33,6 +33,7 @@ app.get('/', (req, res) => {
 // routes
 app.use('/products', require('./api/routes/productsRoute'))
 app.use('/users', require('./api/routes/usersRoute'))
+app.use('/shoppingCart', require('./api/routes/shoppingCartRoute'))
 
 // error handler
 app.use(errorHandler)

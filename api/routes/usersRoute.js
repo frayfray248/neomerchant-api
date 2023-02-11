@@ -12,9 +12,10 @@ const router = express.Router()
 
 // routes
 router.post('/', UsersController.createUser)
-router.delete('/', auth, UsersController.deleteUser)
+router.delete('/:id', auth, UsersController.deleteUser)
 router.post('/login', UsersController.login)
-
+router.get('/:userId/shoppingcart', auth, UsersController.getShoppingCart)
+router.patch('/:userId/shoppingcart', auth, UsersController.updateShoppingCart)
 
 // export
 module.exports = router
