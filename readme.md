@@ -9,8 +9,9 @@ Neomerchant-api is a REST API to manage products, users, and stores, and handle 
 | GET | /products | Get all products | No |
 | GET | /products/{id} | Get a product by id | No |
 | GET | /users/{id}/shoppingcart/ | Get a user's shopping cart | Yes |
-| GET | /users | Get All users | No |
+| POST | /users | Create a user | No |
 | POST | /users/login | Log in a user and return a session token | No |
+| GET | /users/{id}/shoppingcart | Get a user's shopping cart | Yes |
 | PATCH | /users/{id}/shoppingcart | Update a user's shopping cart | Yes |
 | DELETE | /users/{id} | Delete a user by id | Yes |
 | GET | /shoppingcart/{id} | Get a shopping cart by id | Yes |
