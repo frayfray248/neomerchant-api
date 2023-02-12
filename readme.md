@@ -38,7 +38,7 @@ Authentication: Bearer {token}
 
 ### Product
 
-```json
+```
 {
     name: String,
     title : String,
@@ -48,7 +48,7 @@ Authentication: Bearer {token}
 }
 ```
 ### User
-```json
+```
 {
     username: String,
     password: String,
@@ -58,7 +58,7 @@ Authentication: Bearer {token}
 }
 ```
 ### ShoppingCart
-```json
+```
 {
     products: [
         {

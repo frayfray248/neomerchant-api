@@ -124,7 +124,7 @@ exports.login = (req, res, next) => {
             const token = await jwt.sign(
                 jwtPayLoad,
                 process.env.JWT_KEY,
-                { expiresIn: "1h" }
+                { expiresIn: process.env.JWT_EXPIRY }
             )
 
             // send token
