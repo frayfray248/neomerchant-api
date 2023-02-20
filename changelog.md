@@ -1,3 +1,7 @@
+# 0.6.0
+
+- Added POST /orders to create an order
+
 # 0.5.0
 
 - Added PATCH /users/{id}/shoppingcart to update a user's shoppingcart

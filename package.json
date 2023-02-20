@@ -1,6 +1,6 @@
 {
   "name": "neomerchant-api",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "An Express REST API for the neomerchant ecommerce site",
   "main": "app.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "author": "Fraser Macallum",
   "license": "ISC",
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
