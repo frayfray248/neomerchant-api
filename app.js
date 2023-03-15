@@ -8,6 +8,11 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const { errorHandler } = require('./error/error')
+const YAML = require('yamljs');
+const swaggerUi = require('swagger-ui-express')
+
+// documentation
+const docs = YAML.load('./api-docs.yml')
 
 // vars
 const port = process.env.PORT || 3000
@@ -19,6 +24,7 @@ const app = express()
 app.use(express.json()); // parse json payloads
 app.use(morgan('dev'));  // logging
 app.use(cors())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs))
 
 
 // connect to database

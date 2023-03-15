@@ -1,0 +1,505 @@
+openapi: 3.0.0
+info:
+  title: neomerchant-api
+  description: An Express REST API for the neomerchant ecommerce site
+  version: 0.6.0
+components:
+
+  responses:
+    ServerError:
+      description: Internal Server Error
+
+  securitySchemes:
+    auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the user
+        password:
+          type: string
+          format: password
+          description: The password of the user
+        shoppingCart:
+          type: string
+          description: The ID of the user's shopping cart
+          $ref: '#/components/schemas/ShoppingCart'
+        role:
+          type: string
+          description: The role of the user
+        orders:
+          type: object
+          description: An object containing the user's order history
+
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the product
+        title:
+          type: string
+          description: The title of the product
+        description:
+          type: string
+          description: The description of the product
+        price:
+          type: number
+          format: double
+          description: The price of the product
+        category:
+          type: string
+          description: The category of the product
+
+    Order:
+      type: object
+      properties:
+        user:
+          type: string
+          description: The ID of the user who placed the order
+          $ref: '#/components/schemas/User'
+        total:
+          type: number
+          format: double
+          description: The total cost of the order
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: The ID of the product
+                $ref: '#/components/schemas/Product'
+              quantity:
+                type: integer
+                description: The quantity of the product ordered
+
+    ShoppingCart:
+      type: object
+      properties:
+        user:
+          type: string
+          description: The ID of the user who owns the shopping cart
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: The ID of the product
+              quantity:
+                type: integer
+                description: The quantity of the product in the cart
+
+paths:
+  /products:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Get all products
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: No products found
+        '500':
+          description: Internal server error
+
+  /products/{id}:
+    get:
+      summary: Get a product by id
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          description: id of a product
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+        '500':
+          description: Internal server error
+
+
+    get:
+      summary: Get a user's shopping cart
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Returns a user's shopping cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCart'
+
+  /users/{userId}/shoppingCart:
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        description: ID of the user
+    get:
+      summary: Get a user's shopping cart
+      tags:
+        - Users
+      security:
+        - auth: []
+      responses:
+        '200':
+          description: Returns a user's shopping cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCart'
+        '401':
+          description: "Not authorized"
+        '404':
+          description: "No shopping cart found"
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      summary: Update a user's shopping cart
+      tags:
+        - Users
+      security:
+        - auth: []
+      requestBody:
+        description: New shopping cart content
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        description: The ID of the product
+                      quantity:
+                        type: integer
+                        description: The quantity of the product ordered
+      responses:
+        '200':
+          description: Shopping cart updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCart'
+        '401':
+          description: "Not authorized"
+        '404':
+          description: "No shopping cart found"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /users:
+    post:
+      summary: Create a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 18
+                password:
+                  type: string
+                  minLength: 6
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                username-required:
+                  value:
+                    message: "username required"
+                password-required:
+                  value:
+                    message: "password required"
+                password-min-length:
+                  value:
+                    message: "password must be at least 6 characters long"
+                username-taken:
+                  value:
+                    message: "username taken"
+                invalid-data:
+                  value:
+                    message: "invalid user data"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /users/login:
+    post:
+      summary: Log in a user and return a session token
+      tags:
+        - Users
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+          headers:
+            Authorization:
+              description: Bearer token to be included in the Authorization header of subsequent requests
+              schema:
+                type: string
+        '400':
+          description: Invalid user data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                username-required:
+                  value:
+                    message: "username required"
+                password-required:
+                  value:
+                    message: "password required"
+        '401':
+          description: Authorization failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Invalid username or password
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /users/{id}:
+    delete:
+      summary: Delete a user by id
+      tags:
+        - Users
+      security:
+        - auth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: id of the user to delete.
+      responses:
+        '200':
+          description: User deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: user deleted
+        '401':
+          description: Not authorized.
+        '404':
+          description: User not found.
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /shoppingCart:
+    post:
+      summary: Create a shopping cart
+      tags:
+        - ShoppingCart
+      security:
+        - auth: []
+      responses:
+        '201':
+          description: Shopping cart created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCart'
+        '400':
+          description: User already has shopping cart
+        '401':
+          description: Not authorized.
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /shoppingCart/{id}:
+    get:
+      summary: Get a shopping cart by id
+      tags:
+        - ShoppingCart
+      security:
+        - auth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: id of the shopping cart
+      responses:
+        '200':
+          description: Get a shopping cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCart'
+        '401':
+          description: Not authorized.
+        '404':
+          description: No shopping cart found
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    patch:
+      summary: Update a shopping cart by id
+      tags:
+        - ShoppingCart
+      security:
+        - auth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: id of the shopping cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        description: The ID of the product
+                      quantity:
+                        type: integer
+                        description: The quantity of the product ordered
+      responses:
+        '200':
+          description: Updated shopping cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCart'
+        '400':
+          description: Request does not contain any products.
+        '401':
+          description: Not authorized.
+        '404':
+          description: No shopping cart found
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /orders:
+    post:
+      summary: Create an order
+      tags:
+        - Orders
+      security:
+        - auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Product'   
+      responses:
+        '200':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        '400':
+          description: Product does not exist
+        '401':
+          description: Not authorized.
+        '500':
+          $ref: '#/components/responses/ServerError'
